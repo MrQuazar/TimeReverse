@@ -21,8 +21,10 @@ public class LookAround : MonoBehaviour
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -clampAngle, clampAngle);
-
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f); // Up/down
-        playerBody.Rotate(Vector3.up * mouseX); // Left/right
+        if (mouseX != 0 & mouseY != 0)
+        {
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f); // Up/down
+            playerBody.Rotate(Vector3.up * mouseX); // Left/right
+        }
     }
 }

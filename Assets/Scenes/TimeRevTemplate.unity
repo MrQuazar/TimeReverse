@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c29dd16478214d7459193ad7549bd21b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 100
+  mouseSensitivity: 500
   playerBody: {fileID: 1058586311}
   clampAngle: 45
 --- !u!1 &483444626
@@ -532,9 +532,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recordDuration: 5
-  positionHistory: []
-  rotationHistory: []
+  cameraRotationHistory: []
   player: {fileID: 1058586307}
+  myCamera: {fileID: 84681160}
 --- !u!4 &761119909
 Transform:
   m_ObjectHideFlags: 0

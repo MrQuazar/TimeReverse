@@ -1,36 +1,37 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MovementRecorder : MonoBehaviour
 {
     public float recordDuration = 5f;
-    [SerializeField]
     private List<Vector3> positionHistory = new List<Vector3>();
-    [SerializeField]
     private List<Quaternion> rotationHistory = new List<Quaternion>();
+    private List<Quaternion> cameraRotationHistory = new List<Quaternion>();
     private bool isRewinding = false;
     [SerializeField]
     private GameObject player;
+    [SerializeField]
+    private GameObject myCamera;
 
     void Update()
     {
-        if (isRewinding)
-            return;
-
-        RecordMovement();
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!isRewinding && Input.GetKeyDown(KeyCode.Space))
         {
             StartCoroutine(RewindMovement());
+        }
+
+        if (!isRewinding)
+        {
+            RecordMovement();
         }
     }
 
     void RecordMovement()
     {
         positionHistory.Add(player.transform.position);
-        rotationHistory.Add(player.
-            
-            transform.rotation);
+        rotationHistory.Add(player.transform.rotation);
+        cameraRotationHistory.Add(myCamera.transform.localRotation);
 
         // Limit history to last N seconds
         int maxFrames = Mathf.RoundToInt(recordDuration / Time.deltaTime);
@@ -38,22 +39,30 @@ public class MovementRecorder : MonoBehaviour
         {
             positionHistory.RemoveAt(0);
             rotationHistory.RemoveAt(0);
+            cameraRotationHistory.RemoveAt(0);
         }
     }
 
-    IEnumerator<WaitForEndOfFrame> RewindMovement()
+    IEnumerator RewindMovement()
     {
         isRewinding = true;
 
-        for (int i = positionHistory.Count - 1; i >= 0; i--)
+        while (Input.GetKey(KeyCode.Space) && positionHistory.Count > 0)
         {
-            player.transform.position = positionHistory[i];
-            player.transform.rotation = rotationHistory[i];
+            int lastIndex = positionHistory.Count - 1;
+
+            player.transform.position = positionHistory[lastIndex];
+            player.transform.rotation = rotationHistory[lastIndex];
+            myCamera.transform.localRotation = cameraRotationHistory[lastIndex];
+
+            positionHistory.RemoveAt(lastIndex);
+            rotationHistory.RemoveAt(lastIndex);
+            cameraRotationHistory.RemoveAt(lastIndex);
+
             yield return new WaitForEndOfFrame();
         }
 
         isRewinding = false;
-        positionHistory.Clear();
-        rotationHistory.Clear();
+
     }
 }
