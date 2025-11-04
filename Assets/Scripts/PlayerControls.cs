@@ -5,17 +5,6 @@ public class PlayerControls : MonoBehaviour
     public float moveSpeed = 5f;
     public Transform cameraTransform;
 
-    private CharacterController controller;
-
-    void Start()
-    {
-        controller = GetComponent<CharacterController>();
-        if (controller == null)
-        {
-            Debug.LogError("No CharacterController found on the player!");
-        }
-    }
-
     void Update()
     {
         float horizontal = Input.GetAxis("Horizontal");
@@ -30,7 +19,17 @@ public class PlayerControls : MonoBehaviour
         right.Normalize();
 
         Vector3 moveDirection = (forward * vertical + right * horizontal) * moveSpeed;
+        transform.Translate(moveDirection * Time.deltaTime, Space.World);
 
-        controller.Move(moveDirection * Time.deltaTime);
+        int rayLength = 1;
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, rayLength))
+        {
+            if (hitInfo.collider.CompareTag("Ground"))
+            {
+                Debug.Log("Ground detected below!");
+            }
+        }
     }
 }
